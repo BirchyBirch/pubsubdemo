@@ -1,0 +1,23 @@
+FROM mcr.microsoft.com/dotnet/core/sdk:3.0 AS build
+WORKDIR /src
+
+# copy csproj and restore as distinct layers
+COPY src/ /src
+WORKDIR /src
+RUN dir
+RUN dotnet publish -c Release -o .build/website
+RUN PWSH -Command {Compress-Archive .build\website art\website.zip}
+RUN PWSH -Command {ls .build/*}
+# copy and publish app and libraries
+# WORKDIR /app/
+# COPY dotnetapp/. ./dotnetapp/
+# COPY utils/. ./utils/
+# WORKDIR /app/dotnetapp
+# RUN dotnet publish -c Release -o out
+
+
+# # test application -- see: dotnet-docker-unit-testing.md
+# FROM build AS testrunner
+# WORKDIR /app/tests
+# COPY tests/. .
+# ENTRYPOINT ["dotnet", "test", "--logger:trx"]
